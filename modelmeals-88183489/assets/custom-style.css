@@ -1,7 +1,3 @@
-a:hover, site-nav__link {
-  color: #ffe100 !important;
-}
-
-.btn:hover {
-  background-color: #ffe100;
+a:hover, .site-nav__link:hover {
+  color: #ffe100;
 }
