@@ -1,3 +1,10 @@
+<style>
+.hidden {
+  display: none;
+}
+</style>
+
+
 {% comment %}
 
   This is your /cart template.
@@ -54,8 +61,9 @@
 
           <div class="grid__item large--one-half">
             <div class="grid">
-
+              <!-- Removed cart images
               <div class="grid__item one-third">
+                {% if item.image != null %}
                 <a href="{{ item.url | within: collections.all }}" class="cart__image">
 
                   {% comment %}
@@ -64,7 +72,9 @@
                   {% endcomment %}
                   <img src="{{ item | img_url: 'medium' }}" alt="{{ item.title | escape }}">
                 </a>
-              </div>
+                {% endif %}
+              </div> -->
+
 
               <div class="grid__item two-thirds">
                 <a href="{{ item.url }}" class="h5">
@@ -105,7 +115,7 @@
                   {% endfor %}
                 {% endif %}
 
-                <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="cart__remove">
+                <a href="/cart/change?{% for item in cart.items %}line={{ forloop.index }}&amp;quantity=0{% endfor %}" class="cart__remove">
                   <small>{{ 'cart.general.remove' | t }}</small>
                 </a>
               </div>
@@ -118,12 +128,13 @@
 
               <div class="grid__item one-third">
                 <span class="cart__mini-labels">{{ 'cart.label.price' | t }}</span>
-                <span class="h5">{{ item.price | money }}</span>
+                <span class="h5">{% if item.price > 0 %}{{ item.price | money }}{% endif %}</span>
               </div>
 
               <div class="grid__item one-third text-center">
                 <span class="cart__mini-labels">{{ 'cart.label.quantity' | t }}</span>
-                <input type="number" class="cart__quantity-selector" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+                <input class="cart__quantity-selector hidden" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+                <span class="cart__quantity-selector">{{ item.quantity }}</span>
               </div>
 
               <div class="grid__item one-third text-right">
@@ -189,7 +200,8 @@
             {% endif %}
           </p>
           <p><em>{{ 'cart.general.shipping_at_checkout' | t }}</em></p>
-          <input type="submit" name="update" class="btn--secondary update-cart" value="{{ 'cart.general.update' | t }}">
+          <!-- <input type="submit" name="update" class="btn--secondary update-cart" value="{{ 'cart.general.update' | t }}"> -->
+          <input type="submit" id="remove" name="remove" class="btn--secondary update-cart" value="{{ 'cart.general.remove' | t }}">
           <input type="submit" name="checkout" class="btn checkout" value="{{ 'cart.general.checkout' | t }}">
 
           {% if additional_checkout_buttons %}
@@ -210,3 +222,24 @@
   <p>{{ 'cart.general.empty' | t }}</p>
   <p>{{ 'cart.general.continue_browsing_html' | t }}</p>
 {% endif %}
+
+<!-- Clear cart -->
+<script>
+"use strict";
+//  NodeList iteration not support by Chrome and Safari
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+function removeFromCart() {
+  var inputsClear = document.querySelectorAll('.cart__quantity-selector')
+  for (let input of inputsClear) {
+    input.setAttribute("value", 0);
+  }
+}
+
+let items = document.querySelectorAll('.cart__quantity-selector');
+if (items.length > 0) {
+  let cartClear = document.getElementById("remove");
+  cartClear.addEventListener('click', removeFromCart, false);
+}
+
+
+</script>

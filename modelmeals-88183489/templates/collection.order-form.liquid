@@ -291,7 +291,6 @@ let packageQty2 = 0;
 
 // Display Quantities
 function display() {
-
   // Get total package quantities
   let packageCollection = document.querySelectorAll(".package-qty");
   for (let packageProduct of packageCollection) {
@@ -314,10 +313,10 @@ function display() {
       }
     }
   }
+  // Get total packages inputed
   totalPackageQty = packageQty1 + packageQty2;
+  // Get total product selection available
   totalProductSelections = dishSelectionMax1 + dishSelectionMax2;
-
-
   // Set product max for Main Dishes
   let productInputs = document.querySelectorAll(".package");
   for (let input of productInputs) {
@@ -328,8 +327,6 @@ function display() {
       input.setAttribute("max", totalProductSelections);
     }
   }
-
-
   // Find Product Collection1 Quantities
   let productCollection1 = document.querySelectorAll(".main-dish-qty");
   let collection1Selected = 0;
@@ -338,7 +335,6 @@ function display() {
       collection1Selected += parseInt(product.value,10);
     }
   }
-
   // Find Product Collection2 Quantities
   let productCollection2 = document.querySelectorAll(".side-dish-qty");
   let collection2Selected = 0;
@@ -350,20 +346,21 @@ function display() {
 
   function displaySelected(collectionRemaining, display, caption, collectionSelected) {
     if (collectionRemaining > 0) {
-      $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
       caption.classList.remove("hidden");
-      console.log(display.id);
       if (display.id === 'display-main-qty') {
+        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "Choose " + collectionRemaining + " (max " + 2 * totalPackageQty + " of each main dish)";
       } else {
+        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "Choose " + collectionRemaining;
       }
       display.style.color = 'black'
     } else if (collectionSelected > 0) {
-      $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
       if (display.id === 'display-main-qty') {
+        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "You've choosen " + collectionSelected + ", you're ready for your side dishes.";
       } else {
+        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "You've choosen " + collectionSelected + ", you're ready for any add on options.";
       }
       display.style.color = 'green'
@@ -429,24 +426,20 @@ function disableInputs(inputsClass, collectionRemaining) {
 
 // On change functions
 function onChange() {
-
   // Clear 0's from form
   if (this.value === '0') {
     this.value = '';
   }
-
   // Set product max
   let productInputs = document.querySelectorAll(".package");
   for (let input of productInputs) {
     input.setAttribute("max", 2 * totalPackageQty);
   }
-
   // Disable product collection empty inputs if max
   let collection1Inputs = document.querySelectorAll(".main-dish-qty");
   let collection2Inputs = document.querySelectorAll(".side-dish-qty");
   disableInputs(collection1Inputs, collection1Remaining);
   disableInputs(collection2Inputs, collection2Remaining);
-
   // Clear inputs if package quantity is reduced
   if (this.classList.contains('package-qty')) {
     if (this.getAttribute('lastvalue') === this.value) {
@@ -478,9 +471,9 @@ function onChange() {
 
   display();
 
-  // Listen for click on inputs
-  let inputs = document.querySelectorAll(".quantity");
-  for (let i = 0; i < inputs.length; i++) {
+// Listen for click on inputs
+let inputs = document.querySelectorAll(".quantity");
+for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('click', onChange, false);
   }
 });

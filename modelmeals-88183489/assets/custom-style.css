@@ -1,3 +1,7 @@
 a:hover, .site-nav__link:hover {
   color: #ffe100;
 }
+
+.one-third {
+    width: 140px;;
+}
