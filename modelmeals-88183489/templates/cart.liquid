@@ -116,7 +116,9 @@
                 {% endif %}
 
                 <a href="/cart/change?{% for item in cart.items %}line={{ forloop.index }}&amp;quantity=0{% endfor %}" class="cart__remove">
+                  <!-- Removed line specific remove from cart
                   <small>{{ 'cart.general.remove' | t }}</small>
+                -->
                 </a>
               </div>
 
@@ -133,17 +135,23 @@
 
               <div class="grid__item one-third text-center">
                 <span class="cart__mini-labels">{{ 'cart.label.quantity' | t }}</span>
-                <input class="cart__quantity-selector hidden" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+
+                <!-- Hide inputs and display quantities through span -->
+                  <input class="cart__quantity-selector hidden" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+                <!-- Hide inputs end -->
+
                 <span class="cart__quantity-selector">{{ item.quantity }}</span>
               </div>
 
               <div class="grid__item one-third text-right">
                 <span class="cart__mini-labels">{{ 'cart.label.total' | t }}</span>
                 <span class="h5">
-                  {% if item.original_line_price != item.line_price %}
-                    <small class="cart-item__original-price"><s>{{ item.original_line_price | money }}</s></small>
+                  {% if item.line_price > 0 %}
+                    {% if item.original_line_price != item.line_price %}
+                      <small class="cart-item__original-price"><s>{{ item.original_line_price | money }}</s></small>
+                    {% endif %}
+                    {{ item.line_price | money }}
                   {% endif %}
-                  {{ item.line_price | money }}
                 </span>
                 {% if item.original_line_price != item.line_price %}
                   {% for discount in item.discounts %}
