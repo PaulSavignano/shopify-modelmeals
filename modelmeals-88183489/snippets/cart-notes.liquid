@@ -1,0 +1,86 @@
+{{ '//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css' | stylesheet_tag }}
+{{ '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js' | script_tag }}
+
+<!-- Delivery Date -->
+<div style="width:300px; clear:both;">
+    <label for="date">Desired delivery date:</label>
+    <input id="date" class="hidden" type="text" name="attributes[date]" value="{{ cart.attributes.date }}" />
+</div>
+
+<script>
+jQuery(function() {
+  jQuery("#date").datepicker( {
+    minDate: +1,
+    maxDate: '+2M',
+    beforeShowDay: jQuery.datepicker.noWeekends
+  } );
+});
+</script>
+
+{% comment %}
+  To remove days of the week that aren't Saturday and Sunday, use this:
+  http://stackoverflow.com/questions/2968414/disable-specific-days-of-the-week-on-jquery-ui-datepicker
+{% endcomment %}
+
+
+<!-- Delivery Details -->
+<div style="width:300px; clear:both;">
+    <label for="delivery-details" class="cart-notes">Delivery details:</label>
+    <input id="delivery-details" class="hidden" type="text" name="attributes[delivery-details]" value="{{ cart.attributes.delivery-details }}" />
+</div>
+
+
+
+<!-- Allergies -->
+<div style="width:300px; clear:both;">
+    <label for="allergies" class="cart-notes">Allergies?:</label>
+    <input id="allergies" class="hidden" type="text" name="attributes[allergies]" value="{{ cart.attributes.allergies }}" />
+</div>
+
+
+
+<!-- How did you hear about us? -->
+<div style="width:300px; clear:both;">
+    <label for="how-did-you-hear-about-us" class="cart-notes">How did you hear about us?:</label>
+    <input id="how-did-you-hear-about-us" class="hidden" type="text" name="attributes[how-did-you-hear-about-us]" value="{{ cart.attributes.how-did-you-hear-about-us }}" />
+</div>
+
+
+<!-- Anything else you'd like us to know? -->
+<div style="width:300px; clear:both;">
+    <label for="anything-else-we-should-know" class="cart-notes">Anything else you'd like us to know?:</label>
+    <input id="anything-else-we-should-know" class="hidden" type="text" name="attributes[anything-else-we-should-know]" value="{{ cart.attributes.anything-else-we-should-know }}" />
+</div>
+
+<!--
+{% assign noteSize = cart.note | size %}
+<div class="grid__item large--five-twelfths">
+  <button type="button" class="text-link cart__note-add{% if noteSize > 0 %} is-hidden{% endif %}">
+    {{ 'cart.label.add_note' | t }}
+  </button>
+  <div class="cart__note{% if noteSize > 0 %} is-active{% endif %}">
+    <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+    <textarea name="note" class="input-full" id="CartSpecialInstructions">{{ cart.note }}</textarea>
+  </div>
+  {% include 'delivery-date' %}
+</div>
+-->
+
+<script>
+
+// Reveal inputs
+function revealInput() {
+  var inputLabel = this.nextSibling;
+  console.log(inputLabel);
+}
+
+
+
+
+// Listen for click on inputs
+var cartNotes = document.querySelectorAll(".cart-notes");
+for (var i = 0; i < cartNotes.length; i++) {
+  cartNotes[i].addEventListener('click', revealInput, false);
+}
+
+</script>

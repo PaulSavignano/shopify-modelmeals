@@ -179,6 +179,14 @@
     </div>
     {% endif %}
 
+
+    <div class="cart__row">
+      <div class="grid">
+        <div class="grid__item large--five-twelfths">
+          {% include 'delivery-date' %}
+        </div>
+      </div>
+    </div>
     <div class="cart__row">
       <div class="grid">
         {% comment %}
@@ -186,18 +194,14 @@
             - Your theme settings can turn this on or off. Default is on.
             - Make sure you have name="note" for the message to be submitted properly
         {% endcomment %}
-        {% if settings.cart_notes_enable %}
-          {% assign noteSize = cart.note | size %}
+
+
           <div class="grid__item large--five-twelfths">
-            <button type="button" class="text-link cart__note-add{% if noteSize > 0 %} is-hidden{% endif %}">
-              {{ 'cart.label.add_note' | t }}
-            </button>
-            <div class="cart__note{% if noteSize > 0 %} is-active{% endif %}">
-              <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
-              <textarea name="note" class="input-full" id="CartSpecialInstructions">{{ cart.note }}</textarea>
-            </div>
+            {% include 'cart-notes' %}
           </div>
-        {% endif %}
+
+
+
         <div class="grid__item text-right{% if settings.cart_notes_enable %} large--seven-twelfths{% endif %}">
           <p>
             <span class="cart__subtotal-title">{{ 'cart.general.subtotal' | t }}</span>
