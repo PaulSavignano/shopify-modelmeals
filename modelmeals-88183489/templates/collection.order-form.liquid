@@ -5,12 +5,14 @@
     border-left: 0;
 }
 
-#display-main-qty, #display-side-qty {
-  opacity: 0;
-}
-
 .caption {
   margin-top: -15px;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.caption.show {
+  opacity: 1;
 }
 
 #main-dish-table {border-top: none}
@@ -28,6 +30,19 @@ a {color: black}
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
 .quantity { text-align: center; width: 60px !important; margin: 0 !important; }
+
+.modal-dialog {}
+.thumbnail {margin-bottom:6px;}
+
+.carousel-control.left,.carousel-control.right{
+  background-image:none;
+  margin-top:10%;
+  width:5%;
+}
+
+
+
+
 </style>
 
 
@@ -110,7 +125,7 @@ a {color: black}
 {% if collection2.products_count > 0 %}
 <table class="table">
   <caption><h1 class="left">{{ collection2.title }}</h1></caption>
-  <caption class="caption hidden" id="caption1"><h4 class="left"><span id="display-main-qty"></span></h4></caption>
+  <caption class="caption hidden" id="caption1"><h4 class="left" id="display-main-qty"></h4></caption>
   {% for product in collection2.products %}
     {% if product.available %}
       {% for variant in product.variants %}
@@ -160,7 +175,7 @@ a {color: black}
 {% if collection3.products_count > 0 %}
 <table class="table">
   <caption><h1 class="left">{{ collection3.title }}</h1></caption>
-  <caption class="caption hidden" id="caption2"><h4 class="left"><span id="display-side-qty"></span></h4></caption>
+  <caption class="caption hidden" id="caption2"><h4 class="left" id="display-side-qty"></h4></caption>
   {% for product in collection3.products %}
     {% if product.available %}
       {% for variant in product.variants %}
@@ -257,16 +272,7 @@ a {color: black}
 
 
 
-<style>
-.modal-dialog {}
-.thumbnail {margin-bottom:6px;}
 
-.carousel-control.left,.carousel-control.right{
-  background-image:none;
-  margin-top:10%;
-  width:5%;
-}
-</style>
 
 
 
@@ -347,25 +353,23 @@ function display() {
   function displaySelected(collectionRemaining, display, caption, collectionSelected) {
     if (collectionRemaining > 0) {
       caption.classList.remove("hidden");
+      caption.classList.add("show");
       if (display.id === 'display-main-qty') {
-        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "Choose " + collectionRemaining + " (max " + 2 * totalPackageQty + " of each main dish)";
       } else {
-        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "Choose " + collectionRemaining;
       }
       display.style.color = 'black'
     } else if (collectionSelected > 0) {
       if (display.id === 'display-main-qty') {
-        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "You've choosen " + collectionSelected + ", you're ready for your side dishes.";
       } else {
-        $(display).fadeTo(0, 0).delay(10).fadeTo(250, 1);
         display.innerHTML = "You've choosen " + collectionSelected + ", you're ready for any add on options.";
       }
       display.style.color = 'green'
     } else {
       caption.classList.add("hidden");
+      caption.classList.remove("show");
       display.innerHTML = "";
       console.log('There are no ' + collectionSelected);
     }

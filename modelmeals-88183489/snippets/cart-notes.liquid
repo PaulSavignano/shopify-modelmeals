@@ -1,20 +1,32 @@
 {{ '//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css' | stylesheet_tag }}
 {{ '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js' | script_tag }}
+<style>
+input.slideIn-fadeIn {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 10px;
+  margin: 0 0 0;
+  transition: all .3s ease-in-out;
+}
+
+.slideIn-fadeIn.show {
+  max-height: 100px;
+  opacity: 1;
+  padding: 8px 10px;
+  margin: 0 0 1em;
+}
+
+
+</style>
 
 <!-- Delivery Date -->
-<div style="width:300px; clear:both;">
-    <label for="date">Desired delivery date:</label>
-    <input id="date" class="hidden" type="text" name="attributes[date]" value="{{ cart.attributes.date }}" />
+<div id="date-select">
+    <label for="date" class="cart-notes">Desired delivery date:</label>
+    <input id="date" class="slideIn-fadeIn" type="text" name="attributes[date]" value="{{ cart.attributes.date }}" />
 </div>
 
 <script>
-jQuery(function() {
-  jQuery("#date").datepicker( {
-    minDate: +1,
-    maxDate: '+2M',
-    beforeShowDay: jQuery.datepicker.noWeekends
-  } );
-});
+
 </script>
 
 {% comment %}
@@ -24,32 +36,32 @@ jQuery(function() {
 
 
 <!-- Delivery Details -->
-<div style="width:300px; clear:both;">
+<div>
     <label for="delivery-details" class="cart-notes">Delivery details:</label>
-    <input id="delivery-details" class="hidden" type="text" name="attributes[delivery-details]" value="{{ cart.attributes.delivery-details }}" />
+    <input id="delivery-details" class="slideIn-fadeIn" type="text" name="attributes[delivery-details]" value="{{ cart.attributes.delivery-details }}" />
 </div>
 
 
 
 <!-- Allergies -->
-<div style="width:300px; clear:both;">
+<div>
     <label for="allergies" class="cart-notes">Allergies?:</label>
-    <input id="allergies" class="hidden" type="text" name="attributes[allergies]" value="{{ cart.attributes.allergies }}" />
+    <input id="allergies" class="slideIn-fadeIn" type="text" name="attributes[allergies]" value="{{ cart.attributes.allergies }}" />
 </div>
 
 
 
 <!-- How did you hear about us? -->
-<div style="width:300px; clear:both;">
+<div>
     <label for="how-did-you-hear-about-us" class="cart-notes">How did you hear about us?:</label>
-    <input id="how-did-you-hear-about-us" class="hidden" type="text" name="attributes[how-did-you-hear-about-us]" value="{{ cart.attributes.how-did-you-hear-about-us }}" />
+    <input id="how-did-you-hear-about-us" class="slideIn-fadeIn" type="text" name="attributes[how-did-you-hear-about-us]" value="{{ cart.attributes.how-did-you-hear-about-us }}" />
 </div>
 
 
 <!-- Anything else you'd like us to know? -->
-<div style="width:300px; clear:both;">
+<div>
     <label for="anything-else-we-should-know" class="cart-notes">Anything else you'd like us to know?:</label>
-    <input id="anything-else-we-should-know" class="hidden" type="text" name="attributes[anything-else-we-should-know]" value="{{ cart.attributes.anything-else-we-should-know }}" />
+      <input id="anything-else-we-should-know" class="slideIn-fadeIn" type="text" name="attributes[anything-else-we-should-know]" value="{{ cart.attributes.anything-else-we-should-know }}" />
 </div>
 
 <!--
@@ -70,10 +82,18 @@ jQuery(function() {
 
 // Reveal inputs
 function revealInput() {
-  var inputLabel = this.nextSibling;
-  console.log(inputLabel);
+  var inputLabel = this.nextSibling.nextSibling;
+  inputLabel.classList.toggle("show");
+  if (inputLabel.classList.contains("show")) {
+    $('#date').datepicker({
+      minDate: +1,
+      maxDate: '+2M',
+      beforeShowDay: jQuery.datepicker.noWeekends
+    });
+  } else {
+    $('#date').datepicker("destroy");
+  }
 }
-
 
 
 
