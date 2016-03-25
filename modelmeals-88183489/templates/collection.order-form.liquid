@@ -4,20 +4,15 @@
     border-right:0;
     border-left: 0;
 }
-
-.caption {
-  margin-top: -15px;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.caption.show {
-  opacity: 1;
-}
-
+.table>thead>tr>th {border: 0}
+.table>thead>tr>th>h1 {margin-bottom: 0}
+.table>thead>tr>th.product-price {padding-left: 20px;}
+h4#display-main-options-qty {margin-top: 0}
+.table>thead>tr>th.caption {padding-top: 0}
 #main-dish-table {border-top: none}
 .display-qty {font-size: 16px}
-.table-inputs {text-align: right}
+.table>thead>tr>th.collection-qty {text-align: right; padding-right: 25px;}
+.table-inputs {text-align: right;}
 input[type="number"], select {display: inline;}
 a {color: black}
 .table-img { width: 80px }
@@ -39,6 +34,7 @@ a {color: black}
   margin-top:10%;
   width:5%;
 }
+
 
 
 
@@ -65,52 +61,57 @@ a {color: black}
 <!-- Modal End -->
 
 
-
 <!-- Table for ordering -->
 {% paginate collection.products by 100 %}
 
 
 
   <!-- Package Options -->
-{% assign collection1 = collections.package-options %}
-{% if collection1.products_count > 0 %}
+{% assign productCollection = collections.package-options %}
+{% if productCollection.products_count > 0 %}
   <table class="table">
-    <caption><h1 class="left">{{ collection1.title }}</h1></caption>
-    {% for product in collection1.products %}
-      {% if product.available %}
-        {% for variant in product.variants %}
-          {% if variant.available %}
-            <tr>
-              {% if product.featured_image %}
-                <td class="table-img">
-                  <a href="#image{{ product.id }}">
-                    <img src="{{ product.featured_image.src | product_img_url: 'thumb' }}" id="image{{ product.id }}" alt="{{ product.featured_image.alt | escape }}" class="modal-img" data-collection="{{ collection1.id }}"/>
-                  </a>
-                </td>
-              {% endif %}
-              <td colspan="{% if product.featured_image %}1{% else %}2{% endif %}">
-                <a href="#image{{ product.id }}" class="modal-description" data-title="{{ product.title }}" data-description="{{ product.description | strip_html }}">
-                 {{ product.title }}{% unless variant.title contains 'Default' %} - {{ variant.title }}{% endunless %}{% unless variant.sku == '' %} - {{ variant.sku }}{% endunless %}
-                 {% if variant.price > 0 %}&nbsp;{{ variant.price | money }}{% endif %}
-                </a>
-              </td>
-              <td class="table-inputs">
-                <input onfocus="this.select()" class="quantity field package-qty" id="{{ product.title }}" data-id="{{ variant.id }}" min="0" type="number" value="" tabindex="1"/>
-              </td>
-            </tr>
-            <!-- Images for Modal -->
-            <div class="hidden" id="img-repo{{ collection1.id }}" name="{{ product.id }}">
-              {% for image in product.images %}
-                <div class="item" id="image{{ product.id }}">
-                  <img class="center-block img-responsive" title="{{ product.title }}" src="{{ image.src | img_url: 'grande' }}" alt="{{ image.alt | escape }}">
-                </div>
-              {% endfor %}
-            </div>
-            <!-- Images for Modal End -->
+    <thead>
+      <tr>
+        <th colspan="2"><h1>{{ productCollection.title }}</h1></th>
+        <th class="product-price">Price</th>
+        <th class="collection-qty">Qty</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in productCollection.products %}
+        <tr>
+          {% if product.featured_image %}
+            <td class="table-img">
+              <a href="#image{{ product.id }}">
+                <img src="{{ product.featured_image.src | product_img_url: 'thumb' }}" id="image{{ product.id }}" alt="{{ product.featured_image.alt | escape }}" class="modal-img" data-collection="{{ productCollection.id }}"/>
+              </a>
+            </td>
           {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
+          <td colspan="{% if product.featured_image and product.price > 0 %}1{% elsif product.price == 0 %}2{% else %}3{% endif %}">
+            <a href="#image{{ product.id }}" class="modal-description" data-title="{{ product.title }}" data-description="{{ product.description | strip_html }}">
+             {{ product.title }}
+            </a>
+          </td>
+          {% if product.price > 0 %}
+            <td>
+              {{ product.price | money }}
+            </td>
+          {% endif %}
+          <td class="table-inputs">
+            <input onfocus="this.select()" class="quantity field {{ productCollection.handle }}-qty" id="{{ product.title }}" data-id="{{ variant.id }}" min="0" type="number" value="" tabindex="1"/>
+          </td>
+        </tr>
+        <!-- Image Repo -->
+        <div class="hidden" id="img-repo{{ productCollection.id }}" name="{{ product.id }}">
+          {% for image in product.images %}
+            <div class="item" id="image{{ product.id }}">
+              <img class="center-block img-responsive" title="{{ product.title }}" src="{{ image.src | img_url: 'grande' }}" alt="{{ image.alt | escape }}">
+            </div>
+          {% endfor %}
+        </div>
+        <!-- Image Repo End -->
+      {% endfor %}
+    </tbody>
   </table>
 {% else %}
   <p>There are no products in this view.</p>
@@ -121,46 +122,52 @@ a {color: black}
 
 
 <!-- Main Dish Options -->
-{% assign collection2 = collections.main-dish-options %}
-{% if collection2.products_count > 0 %}
+{% assign productCollection = collections.main-dish-options %}
+{% if productCollection.products_count > 0 %}
 <table class="table">
-  <caption><h1 class="left">{{ collection2.title }}</h1></caption>
-  <caption class="caption hidden" id="caption1"><h4 class="left" id="display-main-qty"></h4></caption>
-  {% for product in collection2.products %}
-    {% if product.available %}
-      {% for variant in product.variants %}
-        {% if variant.available %}
-          <tr>
-            {% if product.featured_image %}
-              <td class="table-img">
-                <a href="#image{{ product.id }}">
-                  <img src="{{ product.featured_image.src | product_img_url: 'thumb' }}" id="image{{ product.id }}" alt="{{ product.featured_image.alt | escape }}" class="modal-img" data-collection="{{ collection2.id }}"/>
-                </a>
-              </td>
-            {% endif %}
-            <td colspan="{% if product.featured_image %}1{% else %}2{% endif %}">
-              <a href="#image{{ product.id }}" class="modal-description" data-title="{{ product.title }}" data-description="{{ product.description | strip_html }}">
-               {{ product.title }}{% unless variant.title contains 'Default' %} - {{ variant.title }}{% endunless %}{% unless variant.sku == '' %} - {{ variant.sku }}{% endunless %}
-               {% if variant.price > 0 %}&nbsp;{{ variant.price | money }}{% endif %}
-              </a>
-            </td>
-            <td class="table-inputs">
-              <input onfocus="this.select()" class="quantity field package main-dish-qty" id="{{ product.title }}" data-id="{{ variant.id }}" min="0" type="number" value="" tabindex="1"/>
-            </td>
-          </tr>
-          <!-- Images for Modal -->
-          <div class="hidden" id="img-repo{{ collection2.id }}" name="{{ product.id }}">
-            {% for image in product.images %}
-              <div class="item" id="image{{ product.id }}">
-                <img class="center-block img-responsive" title="{{ product.title }}" src="{{ image.src | img_url: 'grande' }}" alt="{{ image.alt | escape }}">
-              </div>
-            {% endfor %}
-          </div>
-          <!-- Images for Modal End -->
+  <thead>
+    <tr>
+      <th colspan="4"><h1>{{ productCollection.title }}</h1></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="display" id="display-main-options-qty"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in productCollection.products %}
+      <tr>
+        {% if product.featured_image %}
+          <td class="table-img">
+            <a href="#image{{ product.id }}">
+              <img src="{{ product.featured_image.src | product_img_url: 'thumb' }}" id="image{{ product.id }}" alt="{{ product.featured_image.alt | escape }}" class="modal-img" data-collection="{{ productCollection.id }}"/>
+            </a>
+          </td>
         {% endif %}
-      {% endfor %}
-    {% endif %}
-  {% endfor %}
+        <td colspan="{% if product.featured_image and product.price > 0 %}1{% elsif product.price == 0 %}2{% else %}3{% endif %}">
+          <a href="#image{{ product.id }}" class="modal-description" data-title="{{ product.title }}" data-description="{{ product.description | strip_html }}">
+           {{ product.title }}
+          </a>
+        </td>
+        {% if product.price > 0 %}
+          <td>
+            {{ product.price | money }}
+          </td>
+        {% endif %}
+        <td class="table-inputs">
+          <input onfocus="this.select()" class="quantity field package {{ productCollection.handle }}-qty" id="{{ product.title }}" data-id="{{ variant.id }}" min="0" type="number" value="" tabindex="1"/>
+        </td>
+      </tr>
+      <!-- Image Repo -->
+      <div class="hidden" id="img-repo{{ productCollection.id }}" name="{{ product.id }}">
+        {% for image in product.images %}
+          <div class="item" id="image{{ product.id }}">
+            <img class="center-block img-responsive" title="{{ product.title }}" src="{{ image.src | img_url: 'grande' }}" alt="{{ image.alt | escape }}">
+          </div>
+        {% endfor %}
+      </div>
+      <!-- Image Repo End -->
+    {% endfor %}
+  </tbody>
 </table>
 {% else %}
 <p>There are no products in this view.</p>
@@ -175,7 +182,7 @@ a {color: black}
 {% if collection3.products_count > 0 %}
 <table class="table">
   <caption><h1 class="left">{{ collection3.title }}</h1></caption>
-  <caption class="caption hidden" id="caption2"><h4 class="left" id="display-side-qty"></h4></caption>
+  <caption class="caption hidden" id="caption2"><h4 class="left" id="display-side-options-qty"></h4></caption>
   {% for product in collection3.products %}
     {% if product.available %}
       {% for variant in product.variants %}
@@ -195,7 +202,7 @@ a {color: black}
               </a>
             </td>
             <td class="table-inputs">
-              <input onfocus="this.select()" class="quantity field package side-dish-qty" id="{{ product.title }}" data-id="{{ variant.id }}" min="0" type="number" value="" tabindex="1"/>
+              <input onfocus="this.select()" class="quantity field package side-dish-otpions-qty" id="{{ product.title }}" data-id="{{ variant.id }}" min="0" type="number" value="" tabindex="1"/>
             </td>
           </tr>
           <!-- Images for Modal -->
@@ -298,7 +305,7 @@ let packageQty2 = 0;
 // Display Quantities
 function display() {
   // Get total package quantities
-  let packageCollection = document.querySelectorAll(".package-qty");
+  let packageCollection = document.querySelectorAll(".package-options-qty");
   for (let packageProduct of packageCollection) {
     if (packageProduct.id === "16-Dish Package") {
       if (packageProduct.value === '') {
@@ -326,15 +333,15 @@ function display() {
   // Set product max for Main Dishes
   let productInputs = document.querySelectorAll(".package");
   for (let input of productInputs) {
-    if (input.classList.contains('main-dish-qty')) {
+    if (input.classList.contains('main-dish-options-qty')) {
       input.setAttribute("max", 2 * totalPackageQty);
     }
-  	if (input.classList.contains('side-dish-qty')) {
+  	if (input.classList.contains('side-dish-options-qty')) {
       input.setAttribute("max", totalProductSelections);
     }
   }
   // Find Product Collection1 Quantities
-  let productCollection1 = document.querySelectorAll(".main-dish-qty");
+  let productCollection1 = document.querySelectorAll(".main-dish-options-qty");
   let collection1Selected = 0;
   for (let product of productCollection1) {
     if (product.value !== '') {
@@ -342,7 +349,7 @@ function display() {
     }
   }
   // Find Product Collection2 Quantities
-  let productCollection2 = document.querySelectorAll(".side-dish-qty");
+  let productCollection2 = document.querySelectorAll(".side-dish-options-qty");
   let collection2Selected = 0;
   for (let product of productCollection2) {
     if (product.value !== '') {
@@ -352,24 +359,24 @@ function display() {
 
   function displaySelected(collectionRemaining, display, caption, collectionSelected) {
     if (collectionRemaining > 0) {
-      caption.classList.remove("hidden");
-      caption.classList.add("show");
-      if (display.id === 'display-main-qty') {
+      display.classList.remove("hidden");
+      display.classList.add("show");
+      if (display.id === 'display-main-options-qty') {
         display.innerHTML = "Choose " + collectionRemaining + " (max " + 2 * totalPackageQty + " of each main dish)";
       } else {
         display.innerHTML = "Choose " + collectionRemaining;
       }
       display.style.color = 'black'
     } else if (collectionSelected > 0) {
-      if (display.id === 'display-main-qty') {
+      if (display.id === 'display-main-options-qty') {
         display.innerHTML = "You've choosen " + collectionSelected + ", you're ready for your side dishes.";
       } else {
         display.innerHTML = "You've choosen " + collectionSelected + ", you're ready for any add on options.";
       }
       display.style.color = 'green'
     } else {
-      caption.classList.add("hidden");
-      caption.classList.remove("show");
+      display.classList.add("hidden");
+      display.classList.remove("show");
       display.innerHTML = "";
       console.log('There are no ' + collectionSelected);
     }
@@ -377,14 +384,14 @@ function display() {
 
   // Display Selected for Product Collection1
   let caption1 = document.getElementById('caption1');
-  let display1 = document.getElementById('display-main-qty');
+  let display1 = document.getElementById('display-main-options-qty');
   collection1Remaining = totalProductSelections - collection1Selected;
   displaySelected(collection1Remaining, display1, caption1, collection1Selected);
 
 
   // Display Selected for Product Collection2
   let caption2 = document.getElementById('caption2');
-  let display2 = document.getElementById('display-side-qty');
+  let display2 = document.getElementById('display-side-options-qty');
   collection2Remaining = totalProductSelections - collection2Selected;
   displaySelected(collection2Remaining, display2, caption2, collection2Selected);
 
@@ -440,12 +447,12 @@ function onChange() {
     input.setAttribute("max", 2 * totalPackageQty);
   }
   // Disable product collection empty inputs if max
-  let collection1Inputs = document.querySelectorAll(".main-dish-qty");
-  let collection2Inputs = document.querySelectorAll(".side-dish-qty");
+  let collection1Inputs = document.querySelectorAll(".main-dish-options-qty");
+  let collection2Inputs = document.querySelectorAll(".side-dish-options-qty");
   disableInputs(collection1Inputs, collection1Remaining);
   disableInputs(collection2Inputs, collection2Remaining);
   // Clear inputs if package quantity is reduced
-  if (this.classList.contains('package-qty')) {
+  if (this.classList.contains('package-options-qty')) {
     if (this.getAttribute('lastvalue') === this.value) {
       this.setAttribute('lastvalue', this.value);
     } else {
