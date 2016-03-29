@@ -1,12 +1,12 @@
-{{ '//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css' | stylesheet_tag }}
-{{ '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js' | script_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js' | script_tag }}
 <style>
+
 input.slideIn-fadeIn {
   max-height: 0;
   opacity: 0;
   padding: 0 10px;
   margin: 0 0 0;
-  transition: all .3s ease-in-out;
+  transition: all .2s ease-in-out;
 }
 
 .slideIn-fadeIn.show {
@@ -16,24 +16,17 @@ input.slideIn-fadeIn {
   margin: 0 0 1em;
 }
 
+.delivery-date {
+  font-weight: 700;
+}
 
 </style>
 
+
 <!-- Delivery Date -->
-<div id="date-select">
-    <label for="date" class="cart-notes">Desired delivery date:</label>
-    <input id="date" class="slideIn-fadeIn" type="text" name="attributes[date]" value="{{ cart.attributes.date }}" />
+<div class="delivery-date">
+  <p>Delivery Date: <span id="date"></span></p>
 </div>
-
-<script>
-
-</script>
-
-{% comment %}
-  To remove days of the week that aren't Saturday and Sunday, use this:
-  http://stackoverflow.com/questions/2968414/disable-specific-days-of-the-week-on-jquery-ui-datepicker
-{% endcomment %}
-
 
 <!-- Delivery Details -->
 <div>
@@ -41,61 +34,27 @@ input.slideIn-fadeIn {
     <input id="delivery-details" class="slideIn-fadeIn" type="text" name="attributes[delivery-details]" value="{{ cart.attributes.delivery-details }}" />
 </div>
 
-
-
-<!-- Allergies -->
-<div>
-    <label for="allergies" class="cart-notes">Allergies?:</label>
-    <input id="allergies" class="slideIn-fadeIn" type="text" name="attributes[allergies]" value="{{ cart.attributes.allergies }}" />
-</div>
-
-
-
-<!-- How did you hear about us? -->
-<div>
-    <label for="how-did-you-hear-about-us" class="cart-notes">How did you hear about us?:</label>
-    <input id="how-did-you-hear-about-us" class="slideIn-fadeIn" type="text" name="attributes[how-did-you-hear-about-us]" value="{{ cart.attributes.how-did-you-hear-about-us }}" />
-</div>
-
-
 <!-- Anything else you'd like us to know? -->
 <div>
     <label for="anything-else-we-should-know" class="cart-notes">Anything else you'd like us to know?:</label>
       <input id="anything-else-we-should-know" class="slideIn-fadeIn" type="text" name="attributes[anything-else-we-should-know]" value="{{ cart.attributes.anything-else-we-should-know }}" />
 </div>
 
-<!--
-{% assign noteSize = cart.note | size %}
-<div class="grid__item large--five-twelfths">
-  <button type="button" class="text-link cart__note-add{% if noteSize > 0 %} is-hidden{% endif %}">
-    {{ 'cart.label.add_note' | t }}
-  </button>
-  <div class="cart__note{% if noteSize > 0 %} is-active{% endif %}">
-    <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
-    <textarea name="note" class="input-full" id="CartSpecialInstructions">{{ cart.note }}</textarea>
-  </div>
-  {% include 'delivery-date' %}
-</div>
--->
+
 
 <script>
+// Find and format next Sunday
+var today = new Date();
+var nextSunday = new Date(today.getFullYear(),today.getMonth(),today.getDate()+(7-today.getDay()));
+var formatSunday = moment(nextSunday).format("dddd MMMM Do YYYY");
+document.getElementById('date').innerHTML = formatSunday;
+
 
 // Reveal inputs
 function revealInput() {
   var inputLabel = this.nextSibling.nextSibling;
   inputLabel.classList.toggle("show");
-  if (inputLabel.classList.contains("show")) {
-    $('#date').datepicker({
-      minDate: +1,
-      maxDate: '+2M',
-      beforeShowDay: jQuery.datepicker.noWeekends
-    });
-  } else {
-    $('#date').datepicker("destroy");
-  }
 }
-
-
 
 // Listen for click on inputs
 var cartNotes = document.querySelectorAll(".cart-notes");
